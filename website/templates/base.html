@@ -16,6 +16,14 @@
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       crossorigin="anonymous"
     />
+    <script>function deleteNote(noteId) {
+      fetch("/delete-note", {
+        method: "POST",
+        body: JSON.stringify({ noteId: noteId }),
+      }).then((_res) => {
+        window.location.href = "/";
+      });
+    }</script>
       <title>{% block title %}Home{% endblock %}</title>    <!--This line allows us to write python in this line we are defining a block in this base template that can be overriden in a child template (other pages)-->
     </head>
 
@@ -30,10 +38,14 @@
 
         <div class="collapse navbar-collapse" id="navbar">
           <div class = "navbar-nav">
+            
+            {% if user.is_authenticated %}
+            <a class = "nav-item nav-link" id="home" href="/">Home</a>
+            <a class = "nav-item nav-link" id="logout" href="/logout">Logout</a>
+            {% else %}
             <a class = "nav-item nav-link" id="login" href="/login">Login</a>
             <a class = "nav-item nav-link" id="signUp" href="/sign-up">Sign up</a>
-            <a class = "nav-item nav-link" id="logout" href="/logout">Logout</a>
-            <a class = "nav-item nav-link" id="home" href="/">Home</a>
+            {% endif %}
           
           </div>
         </div>
@@ -88,9 +100,11 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+
     <script>
     type="text/javascript"
     src="{{ url_for('static', filename='index.js') }}"
     </script>
+
     </body>
 </html>
