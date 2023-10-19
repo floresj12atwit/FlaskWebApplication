@@ -2,6 +2,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
+import re   #this is going to be used to get the url for the video
 
 
 db = SQLAlchemy()
@@ -32,4 +33,4 @@ def create_database(app):       #checks if a database already exists and if it d
         if not path.exists('website/' + DB_NAME):
             db.create_all(app=app)      
             print('Created Database')
-            
+
