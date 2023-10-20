@@ -4,7 +4,9 @@ This is going to hold pages the users can navigate to
                                              #render template allows us to render the templates we've created to hold the pages (the different files containing the web pages)
 from flask import Blueprint, render_template #Blueprint allows us to separate and organize our project, it has URLS defined in it 
 from flask import request
+from flask_login import login_required, current_user
 import re
+
 
 views = Blueprint('views', __name__)
 
@@ -22,6 +24,7 @@ def extract_video_id(url):
 
 #This route now allows GET and POST requests which is needed for the user to enter link (GET requests are the default method so its good practice to make it explicit)
 @views.route('/', methods=['GET','POST']) #this decorates a function to register it with a given URL 
+@login_required
 def home():
     video_id = None
 
@@ -30,7 +33,7 @@ def home():
         video_url = request.form['video_url']
         video_id = extract_video_id(video_url)
 
-    return render_template("home.html", video_id=video_id)
+    return render_template("home.html", video_id=video_id, user=current_user)
 
 
 
