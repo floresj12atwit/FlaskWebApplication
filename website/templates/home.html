@@ -20,6 +20,13 @@ The form is used for the video link-->
     <iframe width ="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" framborder="0" allowfullscreen></iframe>
     {% endif %}
 </div>
+
+    <div id="chat-box" style="border: 1px solid #000; height: 300px; overflow-y: scroll;"></div>
+
+    <input type="text" id="message-input" placeholder="Type a message...">
+    <button id="send-button">Send</button>
+
+
 {% endblock %}
 
 

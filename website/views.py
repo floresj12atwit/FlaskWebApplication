@@ -6,9 +6,11 @@ from flask import Blueprint, render_template #Blueprint allows us to separate an
 from flask import request
 from flask_login import login_required, current_user
 import re
-
+from flask_socketio import SocketIO, send
+import socketio             #added sockets and made app accept socket logic 
 
 views = Blueprint('views', __name__)
+
 
 '''
 This function helps us extract the video id string from the link the user inputs into the form box
@@ -35,5 +37,7 @@ def home():
 
     return render_template("home.html", video_id=video_id, user=current_user)
 
-
+@socketio.on('message')
+def handle_message(message):
+    send({'msg': message['msg']}, broadcast=True)
 
