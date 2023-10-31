@@ -74,10 +74,13 @@ def connect():                                #this technically should be put in
 @login_required
 def home():
 
+    
     room = session.get("room")   #figure out why user can't connect to room when entering name
-    print(room)
-    if room is None or session.get("name") is None or room not in rooms:
+    
+    
+    if room is None or session.get("name") is None or room not in rooms:        #this part of the code is what isn't functioning properly
         return redirect(url_for('views.connect'))
+    
     
     video_id = None
 
@@ -86,6 +89,6 @@ def home():
         video_url = request.form['video_url']
         video_id = extract_video_id(video_url)
 
-    return render_template("home.html", video_id=video_id, user=current_user, room = room)
+    return render_template("home.html", video_id=video_id, user=current_user)
 
 
