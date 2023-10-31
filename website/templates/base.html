@@ -11,6 +11,7 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
         crossorigin="anonymous"
     />
+    <link rel="stylesheet" href={{url_for('static', filename='styles.css')}}>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -24,6 +25,10 @@
         window.location.href = "/";
       });
     }</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    
+    
       <title>{% block title %}Home{% endblock %}</title>    <!--This line allows us to write python in this line we are defining a block in this base template that can be overriden in a child template (other pages)-->
     </head>
 

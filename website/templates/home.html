@@ -2,7 +2,10 @@
 {% block title %}Home{% endblock %}    
 
 {% block content %}
-
+<!--This Home page acts as the "room" that users will join to watch videos and chat together
+It is named home because it is the repurposed home page of the original website
+connectUsers.html connects users to the room or "home page" where the socket connections will be made 
+-->
 <h1>This is the home page :D</h1>       <!--This will only show up for home page (this Jinja templating is very usefuljj)-->
 <br/>
 
@@ -21,11 +24,28 @@ The form is used for the video link-->
     {% endif %}
 </div>
 
+    <br/>
+    
+    <h1>User Chat {{room}}</h1>
     <div id="chat-box" style="border: 1px solid #000; height: 300px; overflow-y: scroll;"></div>
 
-    <input type="text" id="message-input" placeholder="Type a message...">
-    <button id="send-button">Send</button>
+    <div class = "messages" id = "messages">
+        
+        
+    
+    </div>
+    <div class = "input">
+        <input type="text" rows ="3" placeholder="Type a message..." name = "message" id="message">
+        <button type = "button" id="send-button" onClick="sendMessage()">Send</button>
+    </div>
+    
+    <script type = "text/javascript">
+        var socketio = io();
 
+        const sendMessage = () => {
+        console.log("send");
+        };  
+    </script>
 
 {% endblock %}
 
