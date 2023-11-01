@@ -45,7 +45,7 @@ def extract_video_id(url):
 @views.route('/', methods=['GET','POST']) #this decorates a function to register it with a given URL 
 @login_required
 def connect():                                #this technically should be put in the auth.py folder but it's directly linked to the home page which is going to act as a room so I put in views.py
-    #session.clear()
+    session.clear()
     if request.method == "POST":
         name = request.form.get("name")         #forms are python dictionaries so get will try to find the value associated with the passed in key in this case the name 
         code = request.form.get("code")
@@ -74,10 +74,11 @@ def connect():                                #this technically should be put in
 @login_required
 def home():
 
+                                #still working on this 10/31/2023
     room = session.get("room")   #figure out why user can't connect to room when entering name
-    print(room)
+    
     if room is None or session.get("name") is None or room not in rooms:
-        return redirect(url_for('views.connect'))
+        return redirect(url_for("views"))
     
     video_id = None
 

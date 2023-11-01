@@ -62,7 +62,7 @@ def sign_up():
            db.session.commit()
            login_user(new_user, remember=True)
            flash('Account created!', category='sucess')
-           return redirect(url_for('views.connect'))
+           return redirect(url_for("views.connect"))
     
     return render_template("sign_up.html", user=current_user)
 
