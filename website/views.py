@@ -78,7 +78,7 @@ def home():
     room = session.get("room")   #figure out why user can't connect to room when entering name
     
     if room is None or session.get("name") is None or room not in rooms:
-        return redirect(url_for("views"))
+        return redirect(url_for("views.connect"))
     
     
     video_id = None
