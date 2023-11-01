@@ -80,6 +80,7 @@ def home():
     if room is None or session.get("name") is None or room not in rooms:
         return redirect(url_for("views"))
     
+    
     video_id = None
 
     #Checks if a POST request has been made (user entering a link) (we can add error handling here if we deem it necessary in the case that a link is not entered)
@@ -87,6 +88,6 @@ def home():
         video_url = request.form['video_url']
         video_id = extract_video_id(video_url)
 
-    return render_template("home.html", video_id=video_id, user=current_user, room = room)
+    return render_template("home.html", video_id=video_id, user=current_user)
 
 
