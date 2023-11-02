@@ -8,8 +8,7 @@ from flask_login import login_required, current_user
 import re, random
 from flask_socketio import join_room, leave_room, send, SocketIO
 from string import ascii_uppercase
-import socketio            #added sockets and made app accept socket logic 
-
+import socketio     #added sockets and made app accept socket logic 
 
 rooms = {}
 
@@ -83,6 +82,8 @@ def home():
         return redirect(url_for('views.connect'))
     
     
+
+
     video_id = None
 
     #Checks if a POST request has been made (user entering a link) (we can add error handling here if we deem it necessary in the case that a link is not entered)
@@ -92,3 +93,19 @@ def home():
 
     return render_template("home.html", video_id=video_id, user=current_user)
 
+#socket connection happens here
+@socketio.on("connect")         #this is where we implement the "listen" for a socket connection
+def connect(auth):              #rooms are created when a socket connection is made 
+    room = session.get("room")
+    name = session.get("name")
+
+    if not room or not name:
+        return
+    if room not in rooms:
+        leave_room
+        return
+    
+    join_room(room)  #rooms are collections of users much simpler way of connecting them than exchanging IP addresses manually
+    send({"name": name, "message":"has entered the room"}, to= room)
+    rooms[room]["members"] += 1
+    print(f"{name} joined room {room}")

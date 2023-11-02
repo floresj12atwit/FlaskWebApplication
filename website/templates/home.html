@@ -25,9 +25,9 @@ The form is used for the video link-->
 </div>
 
     <br/>
-    
+    <div class = "chatbox">
     <h1>User Chat {{room}}</h1>
-    <div id="chat-box" style="border: 1px solid #000; height: 300px; overflow-y: scroll;"></div>
+    <div class = "message-box" id="chat-box" style="border: 1px solid #000; height: 300px; overflow-y: scroll;"></div>
 
     <div class = "messages" id = "messages">
         
@@ -38,7 +38,8 @@ The form is used for the video link-->
         <input type="text" rows ="3" placeholder="Type a message..." name = "message" id="message">
         <button type = "button" id="send-button" onClick="sendMessage()">Send</button>
     </div>
-    
+</div>
+
     <script type = "text/javascript">
         var socketio = io();
 
