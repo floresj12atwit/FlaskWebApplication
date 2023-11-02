@@ -2,7 +2,7 @@
 This is going to hold pages the users can navigate to
 '''
                                              #render template allows us to render the templates we've created to hold the pages (the different files containing the web pages)
-from flask import Blueprint, redirect, render_template, session, url_for #Blueprint allows us to separate and organize our project, it has URLS defined in it 
+from flask import Blueprint, flash, redirect, render_template, session, url_for #Blueprint allows us to separate and organize our project, it has URLS defined in it 
 from flask import request
 from flask_login import login_required, current_user
 import re, random
@@ -26,7 +26,7 @@ def generate_room_code(length):             #generates a random room code for us
         
         if code not in rooms:           #checks if the code already exists for another room
             break
-    return
+    return code
 
 
 '''
@@ -67,18 +67,20 @@ def connect():                                #this technically should be put in
         session["room"] = room   #temporary session is used to hold user data (we have a database so maybe we won't need this Im just following the tutorial right now)
         session["name"] = name
         return redirect(url_for('views.home'))
+    
+
     return render_template("connectUsers.html", user= current_user)
 
 
-@views.route('/home', methods=['GET','POST'])
-@login_required
+@views.route('/home')
 def home():
 
-                                #still working on this 10/31/2023
-    room = session.get("room")   #figure out why user can't connect to room when entering name
+                                
     
+    room = session.get("room")   
     if room is None or session.get("name") is None or room not in rooms:
-        return redirect(url_for("views.connect"))
+        
+        return redirect(url_for('views.connect'))
     
     
     video_id = None
@@ -89,5 +91,4 @@ def home():
         video_id = extract_video_id(video_url)
 
     return render_template("home.html", video_id=video_id, user=current_user)
-
 
