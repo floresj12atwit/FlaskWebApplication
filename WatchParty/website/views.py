@@ -8,7 +8,8 @@ from flask_login import login_required, current_user
 import re, random
 from flask_socketio import join_room, leave_room, send, SocketIO
 from string import ascii_uppercase
-import socketio     #added sockets and made app accept socket logic 
+from main import socketio
+
 
 rooms = {}
 

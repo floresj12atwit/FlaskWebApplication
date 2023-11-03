@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 import re   #this is going to be used to get the url for the video
 from flask_login import LoginManager
-
+from flask_socketio import SocketIO
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
@@ -14,6 +14,8 @@ def create_app():
     app.config['SECRET_KEY'] = 'asdfasdfasdf'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)  #this assigns the database to the app we are making
+
+    socketio = SocketIO(app)
 
     from .auth import auth
     from .views import views
@@ -38,7 +40,7 @@ def create_app():
 
     
 
-    return app 
+    return app, socketio 
 
 def create_database(app):       #checks if a database already exists and if it does not it will create it 
         if not path.exists('website/' + DB_NAME):
