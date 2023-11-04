@@ -8,13 +8,12 @@ from flask_login import login_required, current_user
 import re, random
 from flask_socketio import join_room, leave_room, send, SocketIO
 from string import ascii_uppercase
-from main import socketio
+from website import socketio
 
 
 rooms = {}
 
 views = Blueprint('views', __name__)
-
 
 
 
@@ -72,7 +71,7 @@ def connect():                                #this technically should be put in
     return render_template("connectUsers.html", user= current_user)
 
 
-@views.route('/home')
+@views.route('/home', methods=['POST', 'GET'])
 def home():
 
                                 

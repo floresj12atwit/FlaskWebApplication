@@ -1,9 +1,11 @@
-from website import create_app
+from website import create_app, socketio
 from flask_socketio import SocketIO, emit, join_room, leave_room
 
 
 
-app, socketio = create_app()
+app= create_app()
+
+
 
 # events happen HERE
 # solution could be to simply run the app in views? OR have events run here 

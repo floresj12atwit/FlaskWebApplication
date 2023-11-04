@@ -8,6 +8,7 @@ from flask_socketio import SocketIO
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
+socketio = SocketIO()
 
 def create_app():
     app = Flask(__name__)
@@ -15,13 +16,18 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)  #this assigns the database to the app we are making
 
-    socketio = SocketIO(app)
+    
+    
 
     from .auth import auth
     from .views import views
     
+    socketio.init_app(app)
+    
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+
+    
 
     from .models import User, Note  #import the model files so that the database model classes are defined
 
@@ -33,6 +39,8 @@ def create_app():
     login_manager.init_app(app)
 
    
+    
+    
 
     @login_manager.user_loader
     def load_user(id):
@@ -40,7 +48,7 @@ def create_app():
 
     
 
-    return app, socketio 
+    return app
 
 def create_database(app):       #checks if a database already exists and if it does not it will create it 
         if not path.exists('website/' + DB_NAME):
