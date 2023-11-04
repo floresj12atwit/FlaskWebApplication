@@ -91,7 +91,27 @@ def home():
         video_url = request.form['video_url']
         video_id = extract_video_id(video_url)
 
-    return render_template("home.html", video_id=video_id, user=current_user)
+    return render_template("home.html", video_id=video_id, user=current_user, code= room, messages = rooms[room]["messages"] )
+
+
+#this is the serving receiving the message from a user and then sending it all other users, as the users aren't connected 
+#they are connected via the server so the way it works is the server recieves the message and then displays it to all users
+#enabling communication between users 
+@socketio.on("message")
+def message(data):
+    room = session.get("room")
+    if room not in rooms: 
+        return
+    
+    content = {                         #instead of doing this the messages could be saved on the server instead
+        "name": session.get("name"),
+        "message": data["data"]
+    }
+
+    send(content, to=room)
+    rooms[room]["messages"].append(content)          
+    print(f"{session.get('name')} says: {data['data']}")
+
 
 #socket connection happens here
 @socketio.on("connect")         #this is where we implement the "listen" for a socket connection
@@ -109,3 +129,17 @@ def connect(auth):              #rooms are created when a socket connection is m
     send({"name": name, "message":"has entered the room"}, to= room)
     rooms[room]["members"] += 1
     print(f"{name} joined room {room}")
+
+@socketio.on("disconnect")      #this handles the event of users leaving the room (socket disconnects)
+def disconnect():
+    room = session.get("room")
+    name = session.get("name")
+    leave_room(room)
+
+    if room in rooms:
+        rooms[room]["members"] -=1
+        if rooms[room]["members"] <=0:      #checks if room is empty so that it can be deleted, no need to store the data anymore
+            del rooms[room]
+    
+    send({"name": name, "message":"has left the room"}, to= room)
+    print(f"{name} left the room {room}")
