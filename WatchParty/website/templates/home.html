@@ -13,15 +13,18 @@ connectUsers.html connects users to the room or "home page" where the socket con
 An iframe is used to display the video to the user
 The form is used for the video link-->
 <h1>Watch Youtube Video</h1>
-<form method ="POST">
-    <input type="text" name="video_url" placeholder="Enter Youtube Video URL" required>
-    <button type = "submit">Watch This</button>
+<form method = "POST" id="video_form">
+    <input type="text" name="video_url" id ="video_url" placeholder="Enter Youtube Video URL" required>
+    <button type = "submit" id="watch">Watch This</button>
 </form>
 <div>
-    {% if video_id %}
 
-    <iframe width ="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" framborder="0" allowfullscreen></iframe>
+    
+    {% if video_url %}
+        <iframe width ="560" height="315" src="https://www.youtube.com/embed/{{ video_url }}" framborder="0" allowfullscreen></iframe>
+    
     {% endif %}
+    
 </div>
 
     <br/>
@@ -44,6 +47,7 @@ The form is used for the video link-->
     <script type = "text/javascript">
         var socketio = io();
 
+        //Beginning of message handling
         const messages = document.getElementById("messages"); //This retrieves data with an id of "messages" which are the messages users will input
         
         const createMessage = (name, msg) => {
@@ -72,8 +76,68 @@ The form is used for the video link-->
             socketio.emit("message", {data: message.value });
             message.value= "";
         };  
+        //End of message handling 
+
+        //This event handler sends the video url to the server but I am stuck on having it manipulate the webpage
+        document.getElementById("video_form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+        
+            const newVideoUrl = document.getElementById("video_url").value;
+            if (newVideoUrl) {
+                socketio.emit("changeVideo", { videoUrl: newVideoUrl });
+            }
+        });
+
+        
+
+
+/**
+        document.getElementById("video_form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+        
+            const newVideoUrl = document.getElementById("video_url").value;
+            if (newVideoUrl) {
+                socketio.emit("changeVideo", { videoUrl: newVideoUrl });
+            }
+        });
+
+        /**
+        function extractVideoId(url) {
+            // Define a regular expression to match YouTube video IDs
+            const videoIdRegex = /(?:youtube\.com\/watch\?v=|youtu.be\/|youtube.com\/embed\/|youtube.com\/v\/|youtube.com\/embed\/videoseries\?list=)([\w-]+)/;
+            
+            // Use the regular expression to extract the video ID from the URL
+            const match = url.match(videoIdRegex);
+        
+            // Check if a match was found, and return the video ID if it exists
+            if (match) {
+                return match[1];
+            } else {
+                return null;
+            }
+        }
+
+
+        document.getElementById("video_form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+            
+            const newVideoUrl = video_url.value;
+            if (newVideoUrl){
+                socketio.emit("changeVideo", {videoUrl: newVideoUrl});
+            
+                const video_frame = document.getElementById("video_frame");
+                video_frame.src = `https://www.youtube.com/embed/${extract_video_id(newVideoUrl)}`;
+            }
+        });
+
+        socketio.on("changeVideo", (data) => {
+            // Update the video for all users in the room
+            const video_frame = document.getElementById("video_frame");
+            video_frame.src = `https://www.youtube.com/embed/${data.video_id}`;
+        });
+        */
     </script>
-    
+
     {% for msg in messages %}
 
         <!--This function allows us to keep chat history when refreshing-->

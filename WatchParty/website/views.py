@@ -33,6 +33,8 @@ This function helps us extract the video id string from the link the user inputs
 This uses Regex (chat gpt helped with this)
 '''
 def extract_video_id(url):
+     if url is None:
+         return None
      pattern = r'(?:youtube\.com\/watch\?v=|youtu.be\/|youtube.com\/embed\/|youtube.com\/v\/|youtube.com\/embed\/videoseries\?list=)([\w-]+)'
      match = re.search(pattern, url)
 
@@ -59,12 +61,13 @@ def connect():                                #this technically should be put in
         room = code 
         if create != False:
             room = generate_room_code(4) 
-            rooms[room]= {"members": 0, "messages": []}   #creates a dictionary that holds numbers of users as well as all the messages in the room in the form of a list
+            rooms[room]= {"members": 0, "messages": [], "video_id": ""}   #creates a dictionary that holds numbers of users as well as all the messages in the room in the form of a list
         elif code not in rooms:
             return render_template("connectUsers.html", error="Room does not exist", code = code, name = name, user=current_user)   
 
         session["room"] = room   #temporary session is used to hold user data (we have a database so maybe we won't need this Im just following the tutorial right now)
         session["name"] = name
+        session["video_id"] = ""
         return redirect(url_for('views.home'))
     
 
@@ -83,16 +86,30 @@ def home():
     
     
 
-
-    video_id = None
-
+        
+    
     #Checks if a POST request has been made (user entering a link) (we can add error handling here if we deem it necessary in the case that a link is not entered)
-    if request.method == 'POST':
-        video_url = request.form['video_url']
-        video_id = extract_video_id(video_url)
+    
 
-    return render_template("home.html", video_id=video_id, user=current_user, code= room, messages = rooms[room]["messages"] )
+    return render_template("home.html", video_id=rooms[room]["video_id"], user=current_user, code= room, messages = rooms[room]["messages"] )
 
+
+@socketio.on("changeVideo") 
+def change_video(data):
+    #if request == "POST":
+        room = session.get("room")
+
+        video_url = data["videoUrl"]
+        video_id = extract_video_id(video_url)  #video id is the string of characters at the end of a youtube link
+        
+        if room in rooms:
+            rooms[room]["video_id"]= video_id
+
+        print(rooms[room]["video_id"])
+        return
+        
+        
+    
 
 #this is the serving receiving the message from a user and then sending it all other users, as the users aren't connected 
 #they are connected via the server so the way it works is the server recieves the message and then displays it to all users
@@ -116,9 +133,10 @@ def message(data):
 #socket connection happens here
 @socketio.on("connect")         #this is where we implement the "listen" for a socket connection
 def connect(auth):              #rooms are created when a socket connection is made 
+    
+
     room = session.get("room")
     name = session.get("name")
-
     if not room or not name:
         return
     if room not in rooms:
@@ -128,6 +146,7 @@ def connect(auth):              #rooms are created when a socket connection is m
     join_room(room)  #rooms are collections of users much simpler way of connecting them than exchanging IP addresses manually
     send({"name": name, "message":"has entered the room"}, to= room)
     rooms[room]["members"] += 1
+    
     print(f"{name} joined room {room}")
 
 @socketio.on("disconnect")      #this handles the event of users leaving the room (socket disconnects)
