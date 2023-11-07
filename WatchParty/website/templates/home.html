@@ -15,14 +15,15 @@ The form is used for the video link-->
 <h1>Watch Youtube Video</h1>
 <form method = "POST" id="video_form">
     <input type="text" name="video_url" id ="video_url" placeholder="Enter Youtube Video URL" required>
-    <button type = "submit" id="watch">Watch This</button>
+    <button type = "submit" id="watch" onClick="changeVideo()">Watch This</button>
 </form>
 <div>
 
     
     {% if video_url %}
+    <div id= "video_frame"> 
         <iframe width ="560" height="315" src="https://www.youtube.com/embed/{{ video_url }}" framborder="0" allowfullscreen></iframe>
-    
+    </div>
     {% endif %}
     
 </div>
@@ -79,6 +80,14 @@ The form is used for the video link-->
         //End of message handling 
 
         //This event handler sends the video url to the server but I am stuck on having it manipulate the webpage
+        //Made the onClick variable for the video form that may be the solution
+
+
+        socket.on("changeVideo", (data) =>{
+
+        });
+
+        /**
         document.getElementById("video_form").addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent the default form submission behavior
         
@@ -87,8 +96,11 @@ The form is used for the video link-->
                 socketio.emit("changeVideo", { videoUrl: newVideoUrl });
             }
         });
-
         
+        const video_id = document.getElementById("video_form");
+
+        //socketio.on("changeVideo", { videoUrl: newVideoUrl});
+
 
 
 /**

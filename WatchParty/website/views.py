@@ -89,9 +89,10 @@ def home():
         
     
     #Checks if a POST request has been made (user entering a link) (we can add error handling here if we deem it necessary in the case that a link is not entered)
-    
+    newVideo= rooms[room]["video_id"]
+    print(newVideo)
 
-    return render_template("home.html", video_id=rooms[room]["video_id"], user=current_user, code= room, messages = rooms[room]["messages"] )
+    return render_template("home.html", video_id=newVideo, user=current_user, code= room, messages = rooms[room]["messages"] )
 
 
 @socketio.on("changeVideo") 
@@ -105,7 +106,7 @@ def change_video(data):
         if room in rooms:
             rooms[room]["video_id"]= video_id
 
-        print(rooms[room]["video_id"])
+        #print(rooms[room]["video_id"])
         return
         
         
