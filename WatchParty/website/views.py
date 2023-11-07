@@ -52,7 +52,7 @@ def connect():                                #this technically should be put in
         code = request.form.get("code")
         join = request.form.get("join", False)
         create = request.form.get("create", False)
-
+        
         if not name:
             return render_template("connectUsers.html", error="Please enter a name.", code = code, name = name, user=current_user)
         if join != False and not code:
@@ -67,7 +67,7 @@ def connect():                                #this technically should be put in
 
         session["room"] = room   #temporary session is used to hold user data (we have a database so maybe we won't need this Im just following the tutorial right now)
         session["name"] = name
-        session["video_id"] = ""
+        
         return redirect(url_for('views.home'))
     
 
@@ -85,29 +85,47 @@ def home():
         return redirect(url_for('views.connect'))
     
     
+    video_id= None
+    '''
+    video_id = None
+    if request.method == "POST":
+        video_url = request.form['video_url']
+        video_id = extract_video_id(video_url)
+        '''
 
-        
-    
+
     #Checks if a POST request has been made (user entering a link) (we can add error handling here if we deem it necessary in the case that a link is not entered)
-    newVideo= rooms[room]["video_id"]
-    print(newVideo)
+    
+    #print(newVideo)
 
-    return render_template("home.html", video_id=newVideo, user=current_user, code= room, messages = rooms[room]["messages"] )
+    return render_template("home.html", video_id=video_id, user=current_user, code= room, messages = rooms[room]["messages"] )
 
 
 @socketio.on("changeVideo") 
 def change_video(data):
     #if request == "POST":
-        room = session.get("room")
-
-        video_url = data["videoUrl"]
-        video_id = extract_video_id(video_url)  #video id is the string of characters at the end of a youtube link
+        room = session.get("room")          #makes sure room exists and exits if it doesn't
+        if room not in rooms:
+            return
         
-        if room in rooms:
-            rooms[room]["video_id"]= video_id
+        video_url = data["videoUrl"]
+
+        video_id = extract_video_id(video_url)
+        session["video_id"]= video_id
+
+        rooms[room]["video_id"]=video_id
+
+        print(video_id)
+        #Try to see how to render a template from socketio 
+
+        
+
+            
 
         #print(rooms[room]["video_id"])
-        return
+    
+    
+
         
         
     

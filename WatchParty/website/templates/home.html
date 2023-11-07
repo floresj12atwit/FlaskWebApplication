@@ -13,20 +13,17 @@ connectUsers.html connects users to the room or "home page" where the socket con
 An iframe is used to display the video to the user
 The form is used for the video link-->
 <h1>Watch Youtube Video</h1>
-<form method = "POST" id="video_form">
-    <input type="text" name="video_url" id ="video_url" placeholder="Enter Youtube Video URL" required>
-    <button type = "submit" id="watch" onClick="changeVideo()">Watch This</button>
+<form id = "video_form">
+    <input type="text" name="video_url" id = "video_url" placeholder="Enter Youtube Video URL" required>
+    <button type = "submit">Watch This</button>
 </form>
 <div>
-
-    
-    {% if video_url %}
-    <div id= "video_frame"> 
-        <iframe width ="560" height="315" src="https://www.youtube.com/embed/{{ video_url }}" framborder="0" allowfullscreen></iframe>
-    </div>
+    {% if video_id %}
+    <iframe width ="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" framborder="0" allowfullscreen></iframe>
     {% endif %}
-    
 </div>
+    
+
 
     <br/>
     <div class = "chatbox">
@@ -46,8 +43,10 @@ The form is used for the video link-->
 </div>
 
     <script type = "text/javascript">
+        
         var socketio = io();
 
+        
         //Beginning of message handling
         const messages = document.getElementById("messages"); //This retrieves data with an id of "messages" which are the messages users will input
         
@@ -83,9 +82,24 @@ The form is used for the video link-->
         //Made the onClick variable for the video form that may be the solution
 
 
-        socket.on("changeVideo", (data) =>{
-
+        document.getElementById("video_form").addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+        
+            const newVideoUrl = document.getElementById("video_url").value;
+            if (newVideoUrl) {
+                socketio.emit("changeVideo", { videoUrl: newVideoUrl });
+            }
         });
+
+        /**
+        const changeVideo = () => {
+            const video_url = document.getElementById("video_url")
+
+            socket.emit("changeVideo", {videoUrl: video_url});
+
+
+        };
+        
 
         /**
         document.getElementById("video_form").addEventListener("submit", function (event) {
