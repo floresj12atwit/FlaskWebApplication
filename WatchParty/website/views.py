@@ -110,10 +110,22 @@ def change_video(data):
 
         rooms[room]["video_id"]=video_id
         
+
+@socketio.on("insertVideo")
+def insertVideo(data):
+    room = session.get("room")
+
+    video_url = data["videoUrl"]
+    video_id = extract_video_id(video_url)
+
+    iframe = f'<iframe width ="560" height="315" src="https://www.youtube.com/embed/{video_id}" allowfullscreen></iframe>'
+    socketio.emit('videoIframe',  iframe, room=room)
+
+
         
         
         
-        #Try to see how to render a template from socketio 
+        
 
         
 
@@ -161,6 +173,7 @@ def connect(auth):              #rooms are created when a socket connection is m
     
     join_room(room)  #rooms are collections of users much simpler way of connecting them than exchanging IP addresses manually
     send({"name": name, "message":"has entered the room"}, to= room)
+    socketio.emit('joined', room = room)  #adding this to get room name in javascript
     rooms[room]["members"] += 1
     
     print(f"{name} joined room {room}")
