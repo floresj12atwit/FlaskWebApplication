@@ -85,20 +85,15 @@ def home():
         return redirect(url_for('views.connect'))
     
     
-    video_id= None
-    '''
-    video_id = None
-    if request.method == "POST":
-        video_url = request.form['video_url']
-        video_id = extract_video_id(video_url)
-        '''
+    
 
 
+    video_id=rooms[room]["video_id"]
     #Checks if a POST request has been made (user entering a link) (we can add error handling here if we deem it necessary in the case that a link is not entered)
     
     #print(newVideo)
 
-    return render_template("home.html", video_id=video_id, user=current_user, code= room, messages = rooms[room]["messages"] )
+    return render_template("home.html", video_id = video_id, user=current_user, code= room, messages = rooms[room]["messages"] )
 
 
 @socketio.on("changeVideo") 
@@ -107,15 +102,17 @@ def change_video(data):
         room = session.get("room")          #makes sure room exists and exits if it doesn't
         if room not in rooms:
             return
-        
+       
         video_url = data["videoUrl"]
 
         video_id = extract_video_id(video_url)
-        session["video_id"]= video_id
+        #session["video_url"]= video_url
 
         rooms[room]["video_id"]=video_id
-
-        print(video_id)
+        
+        
+        
+        
         #Try to see how to render a template from socketio 
 
         
@@ -145,7 +142,7 @@ def message(data):
     }
 
     send(content, to=room)
-    rooms[room]["messages"].append(content)          
+    rooms[room]["messages"].append(content)          #this is only needed so that the page can be refreshed and keep chat
     print(f"{session.get('name')} says: {data['data']}")
 
 

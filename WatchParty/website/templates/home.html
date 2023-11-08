@@ -13,7 +13,7 @@ connectUsers.html connects users to the room or "home page" where the socket con
 An iframe is used to display the video to the user
 The form is used for the video link-->
 <h1>Watch Youtube Video</h1>
-<form id = "video_form">
+<form method = "POST" id = "video_form">
     <input type="text" name="video_url" id = "video_url" placeholder="Enter Youtube Video URL" required>
     <button type = "submit">Watch This</button>
 </form>
@@ -50,7 +50,9 @@ The form is used for the video link-->
         //Beginning of message handling
         const messages = document.getElementById("messages"); //This retrieves data with an id of "messages" which are the messages users will input
         
+        //This is where the message is created and put onto the HTML page
         const createMessage = (name, msg) => {
+        
             const content = `
             <div class = "text">
                 <span>
@@ -67,13 +69,15 @@ The form is used for the video link-->
         };
         
         socketio.on("message", (data) => {
-            createMessage(data.name, data.message);
+            createMessage(data.name, data.message);     //this calls the function to create a message
         });
+
+
 
         const sendMessage = () => {
             const message = document.getElementById("message");
             if (message.value == "") return;
-            socketio.emit("message", {data: message.value });
+            socketio.emit("message", {data: message.value });   //this calls the function above that listens for message
             message.value= "";
         };  
         //End of message handling 
@@ -83,13 +87,26 @@ The form is used for the video link-->
 
 
         document.getElementById("video_form").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent the default form submission behavior
+            //event.preventDefault(); // Prevent the default form submission behavior
         
             const newVideoUrl = document.getElementById("video_url").value;
             if (newVideoUrl) {
+                
                 socketio.emit("changeVideo", { videoUrl: newVideoUrl });
             }
         });
+
+
+        /**
+        socketio.on("changeVideo", (data) =>{
+            updateVideo(data)
+        });
+
+        const updateVideo = (videoUrl) => {
+        
+            const video_url = document.getElementById("video_url");
+            video_url.innerHTML = video_url;
+        };
 
         /**
         const changeVideo = () => {
