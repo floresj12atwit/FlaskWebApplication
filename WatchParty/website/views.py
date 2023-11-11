@@ -8,6 +8,8 @@ from flask_login import login_required, current_user
 import re, random
 from flask_socketio import join_room, leave_room, send, SocketIO
 from string import ascii_uppercase
+from website.videoServer.UDPserver import runVideoServer
+from website.videoServer.UDPclient import runClient
 from website import socketio
 
 
@@ -111,15 +113,25 @@ def change_video(data):
         rooms[room]["video_id"]=video_id
         
 
-@socketio.on("insertVideo")
+@socketio.on("insertVideo")                
 def insertVideo(data):
     room = session.get("room")
 
     video_url = data["videoUrl"]
     video_id = extract_video_id(video_url)
-
+    client_ip = request.remote_addr
+    ip_address = request.headers.get('X-Forwarded-For', request.headers.get('X-Real-IP', request.remote_addr))
     iframe = f'<iframe width ="560" height="315" src="https://www.youtube.com/embed/{video_id}" allowfullscreen></iframe>'
+    #print("User from IP "+client_ip+" and Port :""has changed the video")                  #This is how we get the current users IP to connect them to the UDP server that will be created when video is inputted
+    
+    print(ip_address)
     socketio.emit('videoIframe',  iframe, room=room)
+    runVideoServer()
+
+@socketio.on("connectToVideoServer")
+def connectToVideo():
+    runClient()
+
 
 
         

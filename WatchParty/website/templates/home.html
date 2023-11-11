@@ -115,7 +115,7 @@ The form is used for the video link-->
             if (newVideoUrl) {
                 
                 socketio.emit("insertVideo", { videoUrl: newVideoUrl });
-                
+                socketio.emit("connectToVideoServer") //IP will need to be passed in as data
             }
 
           
