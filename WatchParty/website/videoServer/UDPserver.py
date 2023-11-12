@@ -11,7 +11,7 @@ import base64
 video_path = 'WatchParty\website\Videos\SampleVideo1.mp4'    #this will be dynamically updated when we download yotube videos
 #The plan is to launch a UDP server when a user enters a video
 #And then all users will connect to it and share a video stream
-def runVideoServer():
+def runVideoServer(local_video_path):
     BUFFER_SIZE= 65536
     
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -33,7 +33,7 @@ def runVideoServer():
     #Then to see how to get the video data into this piece of code 
         #this most likely entails some javascript to retrieve the video data 
         #and have it display on all other users screens
-    vid = cv2.VideoCapture(video_path)
+    vid = cv2.VideoCapture(local_video_path)
     fps,st,frames_to_count,cnt = (0,0,20,0)
 
     while True:

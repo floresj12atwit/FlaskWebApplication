@@ -11,7 +11,7 @@ from string import ascii_uppercase
 from website.videoServer.UDPserver import runVideoServer
 from website.videoServer.UDPclient import runClient
 from website import socketio
-
+from website.videoServer.DownloadYTvid import *
 
 rooms = {}
 
@@ -117,6 +117,7 @@ def change_video(data):
 def insertVideo(data):
     room = session.get("room")
 
+    #these 3 lines are for the iframe 
     video_url = data["videoUrl"]
     video_id = extract_video_id(video_url)
     client_ip = request.remote_addr
@@ -124,9 +125,15 @@ def insertVideo(data):
     iframe = f'<iframe width ="560" height="315" src="https://www.youtube.com/embed/{video_id}" allowfullscreen></iframe>'
     #print("User from IP "+client_ip+" and Port :""has changed the video")                  #This is how we get the current users IP to connect them to the UDP server that will be created when video is inputted
     
+    #These lines are to download the video locally
+    
+    video_output_path = 'WatchParty/website/Videos/'
+    audio_output_path = 'WatchParty/website/Videos/'        #audio will be implemented after video is confirmed to work
+    downloaded_video_path = download_youtube_video(video_url, video_output_path)
+    
     print(ip_address)
     socketio.emit('videoIframe',  iframe, room=room)
-    runVideoServer()
+    runVideoServer(downloaded_video_path)   #this needs to be passed the local video path
 
 @socketio.on("connectToVideoServer")
 def connectToVideo():
