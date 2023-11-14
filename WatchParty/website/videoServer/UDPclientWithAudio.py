@@ -17,46 +17,52 @@ def runClient():  #IP will most likely need to be passed in
     port = 4444
     message = b'TAKE THIS! :D'
     
-    client_socket.sendto(message, (host_ip, port))
+    
     
     from concurrent.futures import ThreadPoolExecutor
-    with ThreadPoolExecutor(max_workers=2) as executor:
+    with ThreadPoolExecutor(max_workers=1) as executor:
         #executor.submit(video_stream, client_socket)
-        executor.submit(audio_stream, host_ip, port, BREAK)
-        executor.submit(video_stream, client_socket)
+        #executor.submit(audio_stream, host_ip, port, BREAK)
+        executor.submit(video_stream, message, host_ip, port)
       
 
-def video_stream():
-    
-        cv2.namedWindow('Received Video')
-        cv2.moveWindow('Receiving Video', 10,360)
-        fps,st,frames_to_count,cnt = (0,0,20,0)
-        while True:
-                packet,_ = client_socket.recvfrom(BUFF_SIZE)
-                data = base64.b64decode(packet,' /')
-                npdata = np.fromstring(data, dtype = np.uint8)
-
-                frame = cv2.imdecode(npdata,1)
-                frame = cv2.putText(frame,'FPS: '+str(fps),(10,40),cv2.FONT_HERSHEY_SIMPLEX,0.7,(0,0,255),2)
-                cv2.imshow("RECEIVING VIDEO",frame)	        
-                key = cv2.waitKey(1) & 0xFF
-              
-                if key == ord('q'):
-                        client_socket.close()
-                        os._exit(1)
-                        break
-                if cnt == frames_to_count:
-                        try:
-                                fps = round(frames_to_count/(time.time()-st))
-                                st=time.time()
-                                cnt=0
-                        except:
-                                pass
-                cnt+=1
+def video_stream(message, host_ip, port):
         
+        print('Entered video_stream function')
 
-        client_socket.close()
-        cv2.destroyAllWindows()
+        fps,st,frames_to_count,cnt = (0,0,20,0)
+       
+
+        try:
+                client_socket.sendto(message, (host_ip, port))
+                while True:
+                        packet,_ = client_socket.recvfrom(BUFF_SIZE)
+                        data = base64.b64decode(packet,' /')
+                        npdata = np.fromstring(data, dtype = np.uint8)
+
+                        frame = cv2.imdecode(npdata,1)
+                        frame = cv2.putText(frame,'FPS: '+str(fps),(10,40),cv2.FONT_HERSHEY_SIMPLEX,0.7,(0,0,255),2)
+                        cv2.imshow("RECEIVING VIDEO",frame)	        
+                        key = cv2.waitKey(1) & 0xFF
+                
+                        if key == ord('q'):
+                                client_socket.close()
+                                os._exit(1)
+                                break
+                        if cnt == frames_to_count:
+                                try:
+                                        fps = round(frames_to_count/(time.time()-st))
+                                        st=time.time()
+                                        cnt=0
+                                except:
+                                        pass
+                        cnt+=1
+        
+        except ConnectionResetError:
+                print("Connection was forcibly closed by the remote host.")
+        finally:
+                client_socket.close()
+                cv2.destroyAllWindows()
 
 def audio_stream(host_ip, port, BREAK):
        
@@ -68,11 +74,11 @@ def audio_stream(host_ip, port, BREAK):
 					output=True,
 					frames_per_buffer=CHUNK)
         #create socket for audio stream (TCP)
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket_address = (host_ip, port-1)      #chooses the next port over for the audio stream 
-        print('server listening at',socket_address)
-        client_socket.connect(socket_address) 
-        print("CLIENT CONNECTED TO",socket_address)
+        client_socket1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket_address1 = (host_ip, port-1)      #chooses the next port over for the audio stream 
+        print('server listening at',socket_address1)
+        client_socket1.connect(socket_address1) 
+        print("CLIENT CONNECTED TO",socket_address1)
         data = b""
         payload_size = struct.calcsize("Q")
         while True:
@@ -93,7 +99,7 @@ def audio_stream(host_ip, port, BREAK):
                except:
                       
                       break
-        client_socket.close()
+        client_socket1.close()
         print('Audio closed', BREAK)
         os._exit(1)
 

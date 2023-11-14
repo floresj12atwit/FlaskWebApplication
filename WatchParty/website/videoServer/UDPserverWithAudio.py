@@ -21,6 +21,7 @@ def runVideoServer(local_video_path, audio_file):   #this needs to pass be passe
     
     #command = "ffmpeg -i {} -ab 160k -ac 2 -ar 44100 -vn {}".format(local_video_path, audio_file)
     #os.system(command)
+    global server_socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, BUFFER_SIZE)
 
@@ -52,11 +53,11 @@ def runVideoServer(local_video_path, audio_file):   #this needs to pass be passe
     from concurrent.futures import ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=3) as executor:         #arguments must be passed in since we run this file from another function and not just the file itself
      
-     executor.submit(audio_stream, host_ip, port, audio_path)
      executor.submit(video_stream_gen, vid, q, BREAK)
-     executor.submit(video_stream, server_socket, q, FPS)
+     executor.submit(audio_stream, host_ip, port, audio_path)
+     executor.submit(video_stream, q, FPS)
 
-def video_stream(server_socket, q, FPS):
+def video_stream(q, FPS):
      global TS 
      fps,st,frames_to_count,cnt = (0,0,1,0)
      cv2.namedWindow('Transmitting Video')
