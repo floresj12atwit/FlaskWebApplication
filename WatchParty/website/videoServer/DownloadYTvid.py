@@ -47,7 +47,7 @@ def play_video(video_path, audio_path):
 def extract_audio(video_path, audio_output_path):
     video = VideoFileClip(video_path)
     audio = video.audio
-    new_audio_path= audio_output_path+'videoAudio.mp3'
+    new_audio_path= audio_output_path+'videoAudio.wav'
     audio.write_audiofile(new_audio_path)
     return new_audio_path
 
@@ -69,4 +69,4 @@ def main():
     play_video(downloaded_video_path, new_audio_path)
      
     
-    
+#extract_audio('WatchParty/website/Videos/SampleVideo1.mp4', 'WatchParty/website/Videos/' )  #clever method of getting the audio from the sample video ;)
