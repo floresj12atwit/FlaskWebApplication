@@ -8,7 +8,7 @@ import time
 import base64
 
 
-video_path = 'WatchParty\website\Videos\SampleVideo1.mp4'    #this will be dynamically updated when we download yotube videos
+video_path = 'WatchParty/website/Videos/SampleVideo1.mp4'    #this will be dynamically updated when we download yotube videos
 #The plan is to launch a UDP server when a user enters a video
 #And then all users will connect to it and share a video stream
 def runVideoServer(local_video_path):
@@ -33,7 +33,9 @@ def runVideoServer(local_video_path):
     #Then to see how to get the video data into this piece of code 
         #this most likely entails some javascript to retrieve the video data 
         #and have it display on all other users screens
-    vid = cv2.VideoCapture(local_video_path)
+    vid = cv2.VideoCapture(video_path)
+    FPS = vid.get(cv2.CAP_PROP_FPS)
+    print(FPS)
     fps,st,frames_to_count,cnt = (0,0,20,0)
 
     while True:
@@ -41,6 +43,8 @@ def runVideoServer(local_video_path):
         print('GOT connection from ', client_addr)
         print(msg)
         WIDTH = 400
+        global TS
+        TS = (0.5/FPS)
         while(vid.isOpened()):
             _,frame = vid.read()
             
@@ -50,17 +54,25 @@ def runVideoServer(local_video_path):
             message = base64.b64encode(buffer)       # base64 encoding and decoding is used to converty binary data into an american standard for informatione exchange text format and vice versa
             server_socket.sendto(message, client_addr)
             frame = cv2.putText(frame,'FPS:' +str(fps),(10,40), cv2.FONT_HERSHEY_SCRIPT_SIMPLEX,0.7,(0,0,255),2)
-            cv2.imshow('TRANSMIITING VIDEO', frame)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                server_socket.close()
-                break
+            
             if cnt == frames_to_count:
                 try:
                     fps = round(frames_to_count/(time.time()-st))
                     st=time.time()
                     cnt=0
+                    if fps>FPS:
+                        TS+=0.001
+                    elif fps<FPS:
+                        TS-=0.001
+                    else:
+                        pass
                 except:
                     pass
             cnt+=1
-#runVideoServer() #uncomment this to run just the server and client together without the webapge
+
+            cv2.imshow('TRANSMIITING VIDEO', frame)
+            key = cv2.waitKey(int(1000*TS)) & 0xFF
+            if key == ord('q'):
+                server_socket.close()
+                break
+runVideoServer(video_path) #uncomment this to run just the server and client together without the webapge

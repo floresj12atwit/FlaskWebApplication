@@ -48,5 +48,5 @@ def runClient():  #IP will most likely need to be passed in
     finally:
         client_socket.close()
 
-    #runClient() #uncomment this line to run the client alone with the UDPserver
+runClient() #uncomment this line to run the client alone with the UDPserver
 
