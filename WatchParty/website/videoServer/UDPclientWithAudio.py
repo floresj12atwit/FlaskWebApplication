@@ -20,18 +20,22 @@ def runClient():  #IP will most likely need to be passed in
     
     
     from concurrent.futures import ThreadPoolExecutor
-    with ThreadPoolExecutor(max_workers=1) as executor:
+    with ThreadPoolExecutor(max_workers=2) as executor:
         #executor.submit(video_stream, client_socket)
-        #executor.submit(audio_stream, host_ip, port, BREAK)
+        executor.submit(audio_stream, host_ip, port, BREAK)
         executor.submit(video_stream, message, host_ip, port)
+        
+        
       
 
 def video_stream(message, host_ip, port):
         
-        print('Entered video_stream function')
-
+        #print('Entered video_stream function')
+        
+        cv2.namedWindow('RECEIVING VIDEO')        
+        cv2.moveWindow('RECEIVING VIDEO', 10,360)
         fps,st,frames_to_count,cnt = (0,0,20,0)
-       
+        
 
         try:
                 client_socket.sendto(message, (host_ip, port))
@@ -85,14 +89,14 @@ def audio_stream(host_ip, port, BREAK):
         while True:
                try:
                         while len(data) < payload_size:
-                               packet = client_socket.recv(4*1024)
+                               packet = client_socket1.recv(4*1024)
                                if not packet: break
                                data += packet
                         packed_msg_size = data[:payload_size]
                         data = data[payload_size:]
                         msg_size = struct.unpack("Q", packed_msg_size)[0]
                         while len(data) < msg_size:
-                               data += client_socket.recv(4*1024)
+                               data += client_socket1.recv(4*1024)
                         frame_data = data[:msg_size]
                         data = data[msg_size:]
                         frame = pickle.loads(frame_data)
@@ -104,4 +108,4 @@ def audio_stream(host_ip, port, BREAK):
         print('Audio closed', BREAK)
         os._exit(1)
 
-runClient()
+#runClient()

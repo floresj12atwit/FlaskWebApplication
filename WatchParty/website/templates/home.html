@@ -23,6 +23,10 @@ The form is used for the video link-->
 <div id = videoContainer>
 
 </div>
+
+<div id = videoContainer2>
+
+</div>
 <!--This is no longer being used but will be kept in case we decided to change that 11/7-->
 <div>
     {% if video_id %}
@@ -122,8 +126,12 @@ The form is used for the video link-->
         });
 
 
-       socketio.on('videoIframe', (iframe)=>{
+       socketio.on('videoIframe', (iframe) =>{
         document.getElementById('videoContainer').innerHTML = iframe;
+       });
+
+       socketio.on('downloadedVideoIframe', (iframe2) =>{
+        document.getElementById('videoContainer2').innerHTML = iframe2;
        });
        //Ending of handling user changing video 
     
