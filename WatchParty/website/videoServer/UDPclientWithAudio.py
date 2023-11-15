@@ -62,6 +62,7 @@ def video_stream(message, host_ip, port):
                 print("Connection was forcibly closed by the remote host.")
         finally:
                 client_socket.close()
+                os._exit(1)
                 cv2.destroyAllWindows()
 
 def audio_stream(host_ip, port, BREAK):

@@ -75,4 +75,4 @@ def runVideoServer(local_video_path):
             if key == ord('q'):
                 server_socket.close()
                 break
-runVideoServer(video_path) #uncomment this to run just the server and client together without the webapge
+#runVideoServer(video_path) #uncomment this to run just the server and client together without the webapge
