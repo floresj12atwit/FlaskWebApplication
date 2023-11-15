@@ -144,7 +144,7 @@ def insertVideo(data):
 
 @socketio.on("connectToVideoServer")
 def connectToVideo():
-    time.sleep(4)       #this is needed to avoid the client searching for a connection before the server is set up
+    time.sleep(8)       #this is needed to avoid the client searching for a connection before the server is set up
     runClient()
 
 
