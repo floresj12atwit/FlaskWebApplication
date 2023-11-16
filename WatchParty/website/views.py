@@ -123,7 +123,7 @@ def insertVideo(data):
     video_id = extract_video_id(video_url)
     client_ip = request.remote_addr
     ip_address = request.headers.get('X-Forwarded-For', request.headers.get('X-Real-IP', request.remote_addr))
-    iframe = f'<iframe width ="560" height="315" src="https://www.youtube.com/embed/{video_id}" allowfullscreen></iframe>'
+    iframe = f'<iframe width ="560" height="315" src="https://www.youtube.com/embed/{video_id}?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>'
     
     #print("User from IP "+client_ip+" and Port :""has changed the video")                  #This is how we get the current users IP to connect them to the UDP server that will be created when video is inputted
     
@@ -137,7 +137,7 @@ def insertVideo(data):
     print("Stopped here")
     iframe2 =f'<iframe width ="560" height="315" src="{downloaded_video_path}" allowfullscreen></iframe>'
     socketio.emit('videoIframe',  iframe, room=room)
-    socketio.emit('downloadedVideoIframe',  iframe2, room=room)
+    #socketio.emit('downloadedVideoIframe',  iframe2, room=room)
     time.sleep(1)
     
     runVideoServer(downloaded_video_path, new_audio_path)   #this needs to be passed the local video and audio path
