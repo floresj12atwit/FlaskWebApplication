@@ -114,6 +114,6 @@ def audio_stream(host_ip, port, BREAK):
                       break
         client_socket1.close()
         print('Audio closed Client', BREAK)
-        os._exit(1)
+        
 
 #runClient()

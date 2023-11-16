@@ -1,29 +1,30 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 {% block content %}
-<div class = "content">
-<form method="post" class="buttons">
-    <h3>Enter a room</h3>
-    <div>
-        <label>Name:</label>
-        <input type="text" placeholder="Enter your name" name = "name" value="{{name}}"/>
+<div class="w3-display-container" style="min-height:100vh;">
+    <div class="w3-display-middle" style="width:100%;">
+        <form method="post" class="w3-container w3-card-4" style="max-width:600px; margin:auto; background-color: #222; color: white;">
+            <h2 class="w3-center">Enter a Room</h2>
 
+            <div class="w3-section">
+                <label for="name">Name:</label>
+                <input class="w3-input w3-border w3-margin-bottom" type="text" id="name" placeholder="Enter your name" name="name" value="{{ name }}" required>
+            </div>
 
+            <div class="w3-section">
+                <input class="w3-input w3-border w3-margin-bottom" type="text" id="roomCode" placeholder="Room Code" name="code" value="{{ code }}">
+                <button class="w3-button w3-block w3-section" type="submit" name="join" style="background-color: #4b4a4a; color: white;">Join a Room</button>
+            </div>
 
+            <button class="w3-button w3-block w3-green w3-section" type="submit" name="create">Create a Room</button>
+            
+            {% if error %}
+            <div class="w3-panel w3-red w3-display-container">
+                <span onclick="this.parentElement.style.display='none'" class="w3-button w3-red w3-large w3-display-topright">&times;</span>
+                <h3>Error!</h3>
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </form>
     </div>
-    <div class = "join">
-
-        <input type ="text" placeholder="Room Code" name = "code" value "{{code}}"/>
-        <button type="submit" name = "join">Join a Room</button>
-
-    </div>
-
-    <button type="submit" name="create" class="create-btn">Create a Room</button>
-    
-    {% if error %}
-    <ul>
-        <li>{{error}}</li>
-    </ul>
-    {% endif %}
-</form>
 </div>
 {% endblock %}

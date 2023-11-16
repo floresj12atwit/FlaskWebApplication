@@ -1,3 +1,47 @@
+#video_form {
+    background-color: #222; /* matching the sidebar color */
+    padding: 16px;
+    color: white;
+}
+
+#video_form input, #video_form button {
+    background-color: #000; /* Dark background for input/button */
+    color: white;
+    border: none;
+}
+
+/* Style adjustments for the chatbox */
+.chatbox {
+    background-color: #222; /* matching the sidebar color */
+    padding: 16px;
+    color: white;
+}
+
+.chatbox #chat-box {
+    border-color: #5b5b5b;
+}
+
+.chatbox #message, .chatbox #send-button {
+    background-color: #000; /* Dark background for input/button */
+    color: white;
+    border: none;
+}
+
+/* Adjust the height of the message box if needed */
+.chatbox .messages {
+    height: 300px; /* Example height, adjust as needed */
+    overflow-y: scroll;
+}
+
+iframe {
+    display: block; /* Make sure iframe is a block-level element */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/*
+*/
+
 .content{
     display: flex;
     align-items: center;
