@@ -12,7 +12,7 @@ import os
 import sys
 
 
-video_path = 'WatchParty/website/Videos/SampleVideo1.mp4'    #this will be dynamically updated when we download yotube videos
+video_path = 'WatchParty/website/Videos/video.mp4'    #this will be dynamically updated when we download yotube videos
 audio_path = 'WatchParty/website/Videos/videoAudio.wav'
 
 
@@ -44,6 +44,8 @@ def runVideoServer(local_video_path, local_audio_path):   #this needs to pass be
     vid = cv2.VideoCapture(local_video_path)
     FPS = vid.get(cv2.CAP_PROP_FPS)
     
+    global videoEnd
+    videoEnd=False
     global TS
     TS = .5/FPS
     BREAK = False
@@ -77,6 +79,11 @@ def video_stream(q, FPS):
             print(TS)
             print(fps)
             frame= q.get()
+            #print(frame)
+            if frame is "VideoEnd":
+                time.sleep(3)
+                message = b"VideoEnd"
+                server_socket.sendto(message,client_address)
             encoded,buffer = cv2.imencode('.jpeg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
             message = base64.b64encode(buffer)
             server_socket.sendto(message,client_address)
@@ -102,10 +109,13 @@ def video_stream(q, FPS):
             cv2.imshow('Transmitting Video', frame)
             key = cv2.waitKey(int(1000*TS)) & 0xFF
             if key == ord('q'):
-                os._exit(1)
+                #os._exit(1)
                 TS = False
                 break
+         
 
+     
+    
 
 #This will handle the audio stream   
 #This will generate the stream of frames in queue
@@ -119,10 +129,19 @@ def video_stream_gen(vid, BREAK):
 
             q.put(frame)
         except:
-            os._exit(1)
-    print('Player closed')
-    BREAK=True
-    vid.release()
+            print("video has ended server") 
+            q.put("VideoEnd")
+            time.sleep(2)
+            break
+            #os._exit(1)
+    msg,_ = server_socket.recvfrom(BUFFER_SIZE)
+    decoded_message = msg.decode("utf-8")
+    if decoded_message is "VideoEndConfirm":
+        print('Player closed Server')
+        BREAK=True
+        server_socket.close()
+        vid.release()
+    
 
 
 
@@ -137,7 +156,7 @@ def audio_stream(host_ip, port, audio_file):
     wf = wave.open(audio_file, 'rb')
     print(wf.getnchannels())
     p = pyaudio.PyAudio()
-    print('server listening at',(host_ip, (port-1)))        
+    print('server listening at for audio',(host_ip, (port-1)))        
     stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                     channels=1,
                     rate=wf.getframerate(),

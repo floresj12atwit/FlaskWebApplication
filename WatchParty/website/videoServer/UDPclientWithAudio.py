@@ -11,6 +11,7 @@ def runClient():  #IP will most likely need to be passed in
     global client_socket
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     client_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, BUFF_SIZE)
+    
     host_name = socket.gethostname()
     host_ip = '127.0.0.1' # This will need to be dynamically updated somehow use the IP made in the server
     print(host_ip)
@@ -40,7 +41,14 @@ def video_stream(message, host_ip, port):
         try:
                 client_socket.sendto(message, (host_ip, port))
                 while True:
+                        
                         packet,_ = client_socket.recvfrom(BUFF_SIZE)
+                        
+                        decoded_packet = packet.decode("utf-8")
+                        #print(decoded_packet)
+                        if decoded_packet is "VideoEnd":
+                               message = b'VideoEndConfirm'
+                               client_socket.sendto(message, (host_ip, port))
                         data = base64.b64decode(packet,' /')
                         npdata = np.fromstring(data, dtype = np.uint8)
 
@@ -51,7 +59,7 @@ def video_stream(message, host_ip, port):
                 
                         if key == ord('q'):
                                 client_socket.close()
-                                os._exit(1)
+                                #os._exit(1)
                                 break
                         if cnt == frames_to_count:
                                 try:
@@ -66,8 +74,9 @@ def video_stream(message, host_ip, port):
                 print("Connection was forcibly closed by the remote host.")
         finally:
                 client_socket.close()
-                os._exit(1)
-                cv2.destroyAllWindows()
+                
+                cv2.destroyWindow()
+                
 
 def audio_stream(host_ip, port, BREAK):
        
@@ -102,10 +111,9 @@ def audio_stream(host_ip, port, BREAK):
                         frame = pickle.loads(frame_data)
                         stream.write(frame)
                except:
-                      
                       break
         client_socket1.close()
-        print('Audio closed', BREAK)
+        print('Audio closed Client', BREAK)
         os._exit(1)
 
 #runClient()
