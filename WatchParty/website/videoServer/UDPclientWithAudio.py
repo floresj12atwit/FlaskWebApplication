@@ -46,9 +46,12 @@ def video_stream(message, host_ip, port):
                         
                         decoded_packet = packet.decode("utf-8")
                         #print(decoded_packet)
-                        if decoded_packet is "VideoEnd":
-                               message = b'VideoEndConfirm'
+                        if decoded_packet == "VideoEnd":
+                               #print("HERE")
+                               message = b"VideoEndConfirm"
                                client_socket.sendto(message, (host_ip, port))
+                               client_socket.close()
+                               print("client socket closed")
                         data = base64.b64decode(packet,' /')
                         npdata = np.fromstring(data, dtype = np.uint8)
 
@@ -75,7 +78,7 @@ def video_stream(message, host_ip, port):
         finally:
                 client_socket.close()
                 
-                cv2.destroyWindow()
+                #cv2.destroyWindow()
                 
 
 def audio_stream(host_ip, port, BREAK):
@@ -95,8 +98,11 @@ def audio_stream(host_ip, port, BREAK):
         print("CLIENT CONNECTED TO",socket_address1)
         data = b""
         payload_size = struct.calcsize("Q")
+        #packet = client_socket1.recv(BUFF_SIZE)
+        print(data)
         while True:
                try:
+                        
                         while len(data) < payload_size:
                                packet = client_socket1.recv(4*1024)
                                if not packet: break
@@ -111,6 +117,7 @@ def audio_stream(host_ip, port, BREAK):
                         frame = pickle.loads(frame_data)
                         stream.write(frame)
                except:
+                
                       break
         client_socket1.close()
         print('Audio closed Client', BREAK)

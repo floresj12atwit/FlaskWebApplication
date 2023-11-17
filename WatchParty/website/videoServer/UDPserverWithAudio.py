@@ -41,6 +41,7 @@ def runVideoServer(local_video_path, local_audio_path):   #this needs to pass be
 
     global q 
     q = queue.Queue(maxsize=10)             #this defines the maximum size of the queue
+    global vid
     vid = cv2.VideoCapture(local_video_path)
     FPS = vid.get(cv2.CAP_PROP_FPS)
     
@@ -48,6 +49,7 @@ def runVideoServer(local_video_path, local_audio_path):   #this needs to pass be
     videoEnd=False
     global TS
     TS = .5/FPS
+    global BREAK
     BREAK = False
     print('FPS: ', FPS, TS)
     totalNumFrames = int(vid.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -76,14 +78,16 @@ def video_stream(q, FPS):
           WIDTH = 400
 
           while(True):
-            print(TS)
-            print(fps)
+            #print(TS)
+            #print(fps)
             frame= q.get()
             #print(frame)
             if frame is "VideoEnd":
+                print(frame, "WE ARE HERE")
                 time.sleep(3)
                 message = b"VideoEnd"
                 server_socket.sendto(message,client_address)
+                
             encoded,buffer = cv2.imencode('.jpeg',frame,[cv2.IMWRITE_JPEG_QUALITY,80])
             message = base64.b64encode(buffer)
             server_socket.sendto(message,client_address)
@@ -134,12 +138,16 @@ def video_stream_gen(vid, BREAK):
             time.sleep(2)
             break
             #os._exit(1)
+    
     msg,_ = server_socket.recvfrom(BUFFER_SIZE)
     decoded_message = msg.decode("utf-8")
-    if decoded_message is "VideoEndConfirm":
+    print(decoded_message)
+    if decoded_message == "VideoEndConfirm":                #THis is how we ensured a graceful disconnection of the sockets 
         print('Player closed Server')
         BREAK=True
+        cv2.destroyAllWindows()
         server_socket.close()
+        print("server video socket closed")
         vid.release()
     
 
@@ -165,13 +173,45 @@ def audio_stream(host_ip, port, audio_file):
 
     client_socket,addr = s.accept()
     
-    while True:
-        if client_socket:
-            while True:
+    total_frames = wf.getnframes()
+    current_frame = 0
+    
+    try:
+        while current_frame<total_frames:
+            
                 data = wf.readframes(CHUNK)
                 a = pickle.dumps(data)
                 message = struct.pack("Q",len(a))+a
+                
                 client_socket.sendall(message)
+                current_frame += CHUNK
+                #print("audio stream is done")
+
+    except Exception as e:
+        print("Error in audio stream:", str(e))
+    finally:
+        # Close resources in the finally block
+        wf.close()
+        print("Audio stream is done")
+        client_socket.close()
+        end_message = b"AudioEnd"
+        client_socket.sendall(end_message)
+
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+    print("Audio stream is done")
+    # Send a signal or message to indicate the end of the audio stream
+    end_message = b"AudioEnd"
+    client_socket.sendall(end_message)   
+
+def stopAudio():
+    msg, client_address = server_socket.recvfrom(BUFFER_SIZE)
+    print(msg, "in handle exit")
+    if msg == "VideoEndConfirm":
+        print('video is DONE')
+    pass
 
 
 #runVideoServer(video_path, audio_path)
