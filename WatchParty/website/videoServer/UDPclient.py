@@ -1,3 +1,12 @@
+'''
+This class is a UDP client for just video transmission, audio is not implemented here this was used to test just video
+
+This is not currently used in the website program
+11/17/23
+'''
+
+
+
 import cv2, imutils, socket
 import numpy as np
 import time

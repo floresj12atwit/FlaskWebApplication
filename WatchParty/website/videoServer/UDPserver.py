@@ -1,3 +1,10 @@
+
+'''
+This class is a UDP server for just video transmission, audio is not implemented here this was used to test just video
+This is not currently used in the website program
+11/17/2023
+'''
+
 #This is the UDP server that the first user to enter a room is going to create 
 #with the purpose of video streaming, this design may have to be changed since the goal is have 
 #all users be able to manipulare the video 
