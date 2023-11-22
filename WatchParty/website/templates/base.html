@@ -14,6 +14,7 @@
     .w3-sidebar { width: 120px; background: #222; }
     #main { margin-left: 120px; }
     @media only screen and (max-width: 600px) { #main { margin-left: 0; } }
+
     </style>
 
     <script>function deleteNote(noteId) {
@@ -28,8 +29,10 @@
     <title>{% block title %}Home{% endblock %}</title>
 </head>
 <body class="w3-black">
+   
+   
     <!-- Sidebar -->
-    <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center">
+    <nav class="w3-sidebar w3-bar-block w3-small w3-hide-small w3-center" style="width:120px; top: 0; bottom: 0; left: 0; position: fixed; z-index: 1;">
         {% if user.is_authenticated %}
         <a href="/" class="w3-bar-item w3-button w3-padding-large w3-black">
             <i class="fa fa-home w3-xxlarge"></i>
@@ -52,12 +55,25 @@
     </nav>
 
     <!-- Page Content -->
-    <div id="main">
-        <div class="container">
+    <div id="main" style="margin-left: 120px;">
+        <div class="logo-container" style="display: flex; justify-content: center; align-items: center;">
+            <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="max-width: 400px; height: auto;">
+          </div>      
+    
+        <div class="container main-content">
             {% block content %}     
             {% endblock %}
         </div>
     </div>
+
+    <!-- Footer -->
+    <div style="max-width:600px; margin:auto; padding: 20px 0;">
+        <footer style="text-align: center; padding-left: 90px;"> <!-- Adjust the padding-left value as needed -->
+            <p>© 2023 WatchParty. All rights reserved.</p>
+            <p>Founded by Joshua Flores, Thanh Thai, Abdul Abdulnabi</p>
+        </footer>
+    </div>
+
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>

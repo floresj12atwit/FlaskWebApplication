@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="w3-display-container" style="min-height:100vh;">
-    <div class="w3-display-middle" style="width:100%;">
-        <form method="post" class="w3-container w3-card-4" style="max-width:600px; margin:auto; background-color: #222; color: white;">
+<div class="w3-display-container" style="min-height:calc(50vh - 70px);"> <!-- Subtracting an estimated height of the header and footer -->
+    <div style="max-width:600px; margin:auto; position:relative; top:50px; padding-bottom: 50px;"> <!-- Add padding-bottom to ensure there's some space above the footer -->
+        <form method="post" class="w3-container w3-card-4" style="background-color: #222; color: white;">
             <h2 class="w3-center">Enter a Room</h2>
 
             <div class="w3-section">
