@@ -94,20 +94,6 @@ The form is used for the video link-->
         };  
         //End of message handling 
 
-        //This event handler sends the video url to the server but I am stuck on having it manipulate the webpage
-        //Made the onClick variable for the video form that may be the solution
-
-/**
-        document.getElementById("video_form").addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent the default form submission behavior
-        
-            const newVideoUrl = document.getElementById("video_url").value;
-            if (newVideoUrl) {
-                
-                socketio.emit("changeVideo", { videoUrl: newVideoUrl });
-            }
-        });
-*/
         
 
         /*

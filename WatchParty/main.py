@@ -20,6 +20,11 @@ if __name__ == '__main__':  #If we run this file the line below will be executed
     https://www.youtube.com/watch?v=dam0GPOAvVI&t=334s
     Github for the youtube video code shown:
     https://github.com/techwithtim/Flask-Web-App-Tutorial
+
+    For the video and audio transmission we adapted the one from the resource below 
+    https://pyshine.com/How-to-send-audio-video-of-MP4-using-sockets-in-Python/
+
+    We had to change it so that the sockets exit gracefully instead of simply stopping the program 
     '''
 
 

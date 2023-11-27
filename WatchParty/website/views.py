@@ -14,7 +14,7 @@ from website import socketio
 from website.videoServer.DownloadYTvid import *
 import time
 
-rooms = {}
+rooms = {}      #Initialize python dictionary to hold the rooms users connect to
 
 views = Blueprint('views', __name__)
 
@@ -98,22 +98,27 @@ def home():
 
     return render_template("home.html", video_id = video_id, user=current_user, code= room, messages = rooms[room]["messages"] )
 
-
+'''
+This function is not currently used and was replaced by "insertVideo" but may be used in the future
+'''
 @socketio.on("changeVideo") 
 def change_video(data):
-    #if request == "POST":
-        room = session.get("room")          #makes sure room exists and exits if it doesn't
+    
+        room = session.get("room")          #makes sure room exists and exits if it doesn't return to previous page
         if room not in rooms:
             return
        
         video_url = data["videoUrl"]
 
         video_id = extract_video_id(video_url)
-        #session["video_url"]= video_url
+        
 
         rooms[room]["video_id"]=video_id
         
 
+'''
+This is an event listener for when a new video is entered
+'''
 @socketio.on("insertVideo")                
 def insertVideo(data):
     room = session.get("room")
@@ -122,43 +127,34 @@ def insertVideo(data):
     video_url = data["videoUrl"]
     video_id = extract_video_id(video_url)
     client_ip = request.remote_addr
+    #Get the ip address of the user entering the video (doesn't do anything at the moment since this is run on the local port)
     ip_address = request.headers.get('X-Forwarded-For', request.headers.get('X-Real-IP', request.remote_addr))
+    #Generates an iframe to be passed to the webpage
     iframe = f'<iframe width ="560" height="315" src="https://www.youtube.com/embed/{video_id}?autoplay=1&mute=1" frameborder="0" allowfullscreen></iframe>'
     
     #print("User from IP "+client_ip+" and Port :""has changed the video")                  #This is how we get the current users IP to connect them to the UDP server that will be created when video is inputted
     
     #These lines are to download the video locally
-    
     video_output_path = 'WatchParty/website/Videos/'
     audio_output_path = 'WatchParty/website/Videos/'        #audio will be implemented after video is confirmed to work
     downloaded_video_path = download_youtube_video(video_url, video_output_path)
     new_audio_path = extract_audio(downloaded_video_path, audio_output_path ) 
     print(ip_address)
-    print("Stopped here")
     iframe2 =f'<iframe width ="560" height="315" src="{downloaded_video_path}" allowfullscreen></iframe>'
-    socketio.emit('videoIframe',  iframe, room=room)
-    #socketio.emit('downloadedVideoIframe',  iframe2, room=room)
+    socketio.emit('videoIframe',  iframe, room=room)    #Emit event to the webpage to update the iframe
+
     time.sleep(1)
     
-    runVideoServer(downloaded_video_path, new_audio_path)   #this needs to be passed the local video and audio path
+    runVideoServer(downloaded_video_path, new_audio_path)   #This launches the video server with the locally downloaded file
 
+#This is an event listener for the other user connected to the room when a video is entered
 @socketio.on("connectToVideoServer")
 def connectToVideo():
     time.sleep(8)       #this is needed to avoid the client searching for a connection before the server is set up
-    runClient()
+    runClient()         #This runs the client code to connect to the video server
 
 
 
-        
-        
-        
-        
-
-        
-
-            
-
-        #print(rooms[room]["video_id"])
     
     
 
