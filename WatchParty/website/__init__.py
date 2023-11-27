@@ -8,7 +8,7 @@ from flask_socketio import SocketIO
 db = SQLAlchemy()
 DB_NAME = "database.db"
 
-socketio = SocketIO()
+socketio = SocketIO()           #initalize socketio instance that is going to be used throughout the application
 
 def create_app():
     app = Flask(__name__)
