@@ -27,11 +27,23 @@ DISCLAIMER:  This currently only runs on the local host as this web application 
 How to run the program:
 
   -Run main.py
+
+  
   -Open the local host or click the link in the output that opens the local host 
+
+  
   -Sign up with a fake email (this does not check of legitimacy of data)
+
+  
   -Once you are signed up log in
+
+  
   -Do the same for another user but in incognito mode or another browser 
+
+  
   -You can now chat between users 
+
+  
   -Enter a video link and click watch this, see the video get transmitted 
     
 
