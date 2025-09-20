@@ -1,4 +1,4 @@
-# FlaskWebApplication
+# Watch Party Web App
 This project is a web application where users can connect to eachother to chat and watch a youtube video together.
 
 This is built using Flask as well as SocketIO for the socket programming needed to connect users together in a web server.
